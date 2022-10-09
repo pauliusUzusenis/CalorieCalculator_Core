@@ -1,0 +1,244 @@
+:root {
+    --green: #A6E4CB;
+    --light-green: #E5F2ED;
+    --white: #FFFFFF;
+    --black: #000000;
+    --border-radius: 0.5rem;
+    --shadow-rgb: 0,0,0;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Particle container. */
+#particle-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+body {
+    background-color: var(--light-green);
+}
+
+.input-validation-error {
+    border: 2px solid red !important;
+}
+
+.field-validation-error {
+    color: red;
+}
+
+.navbar-light .navbar-toggler {
+    border: none;
+}
+
+.bg-light {
+    background-color: var(--green) !important;
+}
+
+.nav-pills {
+    background-color: var(--green) !important;
+}
+
+.tab-content {
+    background-color: var(--white);
+    padding: 1.2rem 1rem;
+}
+
+.nav-pills .nav-link.active {
+    background-color: var(--green);
+    color: var(--dark);
+    text-decoration: underline;
+}
+
+.nav-pills .nav-link {
+    color: var(--dark);
+}
+
+.tab-content th {
+    font-weight: normal;
+}
+
+.nav-pills .nav-link:hover {
+    text-decoration: underline;
+}
+
+footer {
+    height: 150px;
+}
+
+.w-1 {
+    width: 1px;
+}
+
+#btnMenuHeader {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+
+#QuantityFields {
+    display: none;
+}
+
+a {
+    color: var(--dark);
+}
+
+    a:hover {
+        text-decoration: underline;
+        color: var(--dark);
+    }
+
+.legend {
+    margin: auto;
+    padding-top: 15px;
+}
+
+    .legend .list-group {
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .legend .list-group-item {
+        background-color: var(--white);
+        border: 0;
+        padding: 0.3rem 0.4rem;
+    }
+
+.legend-label {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+@media (max-width: 992px) {
+    .container {
+        max-width: 540px;
+    }
+}
+
+.form-control {
+    border: 1px solid var(--light-green);
+    border-radius: var(--border-radius);
+    box-shadow: 0 .125rem .25rem rgba(var(--shadow-rgb),.075) !important;
+}
+
+.form-control:focus {
+    border: 1px solid var(--green) !important;
+    outline: 0;
+}
+
+.box-shadow {
+    box-shadow: 0 .25rem .5rem rgba(var(--shadow-rgb),.14) !important;
+}
+
+.btn {
+    box-shadow: 0 .125rem .25rem rgba(var(--shadow-rgb),.075) !important;
+}
+
+.btn-primary {
+    background-color: #A8C7E1;
+    color: var(--black);
+    border-color: #A8C7E1;
+}
+
+    .btn-primary:hover, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary.focus, .btn-primary:focus {
+        background-color: #FAB571;
+        color: var(--black);
+        border-color: #FAB571;
+    }
+
+.rounded-top-left {
+    border-top-left-radius: var(--border-radius) !important;
+}
+
+.rounded-top {
+    border-top-right-radius: var(--border-radius) !important;
+    border-top-left-radius: var(--border-radius) !important;
+}
+
+.rounded-bottom {
+    border-bottom-right-radius: var(--border-radius) !important;
+    border-bottom-left-radius: var(--border-radius) !important;
+}
+
+.c3-chart-arcs-title {
+    fill: var(--black);
+}
+
+.c3-chart-arc text {
+    fill: var(--black);
+    font-size: 0.8rem;
+}
+
+i.fas {
+    /*["#A8C7E1", "#FAB571", "#FA9A71", "#A6E4CB"]*/
+    color: #A8C7E1;
+}
+
+    i.fas:hover {
+        color: #FA9A71;
+    }
+
+.table-sm {
+    line-height: inherit;
+}
+
+    .table-sm th {
+        background-color: var(--green);
+        font-weight: normal;
+    }
+
+    .table-sm tbody td {
+        background-color: var(--white);
+    }
+
+    .table-sm th, .table-sm td {
+        padding: 0.5rem 0.5rem;
+    }
+
+@media (min-width: 1200px) {
+    .table-sm th, .table-sm td {
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* Rounded corners for tables */
+.table-sm th:first-of-type {
+    border-top-left-radius: 10px;
+}
+
+.table-sm th:last-of-type {
+    border-top-right-radius: 10px;
+}
+
+.table-sm tr:last-of-type td:first-of-type {
+    border-bottom-left-radius: 10px;
+}
+
+.table-sm tr:last-of-type td:last-of-type {
+    border-bottom-right-radius: 10px;
+}

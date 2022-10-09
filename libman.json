@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "toastr.js@2.1.4",
+      "destination": "wwwroot/lib/toastr.js/"
+    },
+    {
+      "library": "particles.js@2.0.0",
+      "destination": "wwwroot/lib/particles.js/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "d3@3.5.17",
+      "destination": "wwwroot/lib/d3/",
+      "files": [
+        "d3.js",
+        "d3.min.js"
+      ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "c3@0.4.8",
+      "destination": "wwwroot/lib/c3/",
+      "files": [
+        "c3.css",
+        "c3.js",
+        "c3.min.css",
+        "c3.min.js"
+      ]
+    },
+    {
+      "library": "jquery-ajax-unobtrusive@3.2.6",
+      "destination": "wwwroot/lib/jquery-ajax-unobtrusive/"
+    }
+  ]
+}

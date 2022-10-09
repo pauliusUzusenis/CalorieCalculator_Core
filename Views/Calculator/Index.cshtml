@@ -1,0 +1,61 @@
+﻿@model CalorieCalculator.ViewModels.IndexViewModel
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row">
+    <div class="col">
+        @using (Html.BeginForm("SaveMenu", "Calculator"))
+        {
+        <div class="row">
+            <div class="col-md-4">
+                @Html.TextBox("Name", "", new { @class = "form-control", placeholder = "Enter menu name" })
+                @Html.ValidationMessage("Name")
+            </div>
+            <div class="col-md-8 mt-3 mt-md-0 text-md-right">
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+        }
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col">
+        <h3>Menu list</h3>
+        <hr class="mb-4 mt-2" />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table class="table-sm box-shadow rounded-bottom w-100">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Menu name</th>
+                    <th class="text-right">Energy</th>
+                    <th class="text-right">Carbs</th>
+                    <th class="text-right">Protein</th>
+                    <th class="text-right">Fat</th>
+                </tr>
+            </thead>
+            <tbody class="rounded-bottom">
+            @foreach (var menu in Model.Menus)
+            {
+                <tr>
+                    <td class="w-1">
+                        <a href="@Url.Action("DeleteMenu", "Calculator" , new { id = menu.Id })">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </td>
+                    <td>@Html.ActionLink(menu.Name, "Details", "Calculator", new { id = menu.Id }, null)</td>
+                    <td class="text-right">@menu.MenuItems.Select(x => x.Energy).Sum().ToString("0.#")&nbsp;kcal</td>
+                    <td class="text-right">@menu.MenuItems.Select(x => x.Carbs).Sum().ToString("0.#")g</td>
+                    <td class="text-right">@menu.MenuItems.Select(x => x.Protein).Sum().ToString("0.#")g</td>
+                    <td class="text-right">@menu.MenuItems.Select(x => x.Fat).Sum().ToString("0.#")g</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

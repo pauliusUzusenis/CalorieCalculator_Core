@@ -1,0 +1,252 @@
+﻿@using System.Text.Json
+@model CalorieCalculator.ViewModels.DetailsViewModel
+@{
+    ViewBag.Title = "Menu Details";
+}
+<div class="row">
+    <div class="col">
+        @using (Html.AjaxBeginForm(
+        "RenameMenu",
+        "Calculator",
+        null,
+        new AjaxOptions
+        {
+            UpdateTargetId = "menuNameDiv",
+            InsertionMode = InsertionMode.Replace,
+            HttpMethod = "Post",
+            OnSuccess = "OnRenameMenuSuccess",
+            OnFailure = "OnRenameMenuFailure"
+        },
+        new { @class = "position-relative" }
+        ))
+        {
+            <div id="menuNameDiv">
+                @Html.Partial("MenuNamePartialView", Model.Menu)
+            </div>
+            <button id="btnMenuHeader" type="submit" class="btn btn-primary float-right">Save</button>
+            <hr class="mb-4 mt-2" />
+        }
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="tab-panel mb-4">
+            <ul class="nav nav-pills rounded-top" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active rounded-top-left" href="#fillingTab" id="filling-tab" role="tab" data-toggle="tab" aria-controls="fillingTab" aria-selected="true">Filling</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="#reviewTab" id="review-tab" role="tab" data-toggle="tab" aria-controls="reviewTab" aria-selected="false">Review</a>
+                </li>
+            </ul>
+            <div class="tab-content box-shadow rounded-bottom border-0">
+                <div class="tab-pane fade show active" id="fillingTab" role="tabpanel" aria-labelledby="filling-tab">
+                    @using (Html.BeginForm("Save", "Calculator"))
+                    {
+                        <label for="Name" class="font-weight-bold">Select product:</label>
+                        @Html.TextBoxFor(m => m.MenuItem.Name, new { @class = "form-control basicAutoComplete border", autocomplete = "off", placeholder = "Enter food name", id = "MenuItemName" })
+                        @Html.ValidationMessageFor(m => m.MenuItem.Name)
+                        <div id="QuantityFields">
+                            <div class="row">
+                                <div class="col-md-6 mt-3">
+                                    <label for="MenuItem.Quantity">Quantity:</label>
+                                    @Html.TextBoxFor(m => m.MenuItem.Quantity, new { @class = "form-control border", placeholder = "Enter quantity", id = "MenuItemQuantity" })
+                                    @Html.ValidationMessageFor(m => m.MenuItem.Quantity)
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <label for="productMeasureType">Measure type:</label>
+                                    @Html.DropDownListFor(m => m.MenuItem.MeasureTypeId, new SelectList(Model.MeasureTypes, "Id", "Name"), new { @class = "form-control border" })
+                                </div>
+                                <div class="col mt-3">
+                                    @Html.HiddenFor(m => m.MenuItem.MenuId)
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="tab-pane fade" id="reviewTab" role="tabpanel" aria-labelledby="review-tab">
+                    <h3>Review Tab</h3>
+                    <table class="table-sm w-100">
+                        <tbody>
+                            @foreach (var menuItem in Model.Menu.MenuItems)
+                            {
+                            <tr>
+                                <td class="w-1">
+                                    <a href="@Url.Action("DeleteMenuItem", "Calculator", new { id = menuItem.Id })">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    @menuItem.Product.Name
+                                </td>
+                                <td class="text-right">
+                                    @menuItem.Energy.ToString("0.#")&nbsp;kcal
+                                </td>
+                                <td class="text-right" style="color: #A8C7E1;">
+                                    @menuItem.Carbs.ToString("0.#")g
+                                </td>
+                                <td class="text-right" style="color: #FAB571;">
+                                    @menuItem.Protein.ToString("0.#")g
+                                </td>
+                                <td class="text-right" style="color: #FA9A71;">
+                                    @menuItem.Fat.ToString("0.#")g
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="tab-panel mb-4">
+            <ul class="nav nav-pills rounded-top" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link rounded-top-left active" href="#macrosTab" id="macros-tab" role="tab" data-toggle="tab" aria-controls="cTab" aria-selected="true">Macros</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="#vitaminsTab" id="vitamins-tab" role="tab" data-toggle="tab" aria-controls="vitaminsTab" aria-selected="false">Vitamins</a>
+                </li>
+            </ul>
+            <div class="tab-content box-shadow rounded-bottom border-0">
+                <div class="tab-pane fade show active" id="macrosTab" role="tabpanel" aria-labelledby="macros-tab">
+                    <div class="container">
+                        <div class="row align-items-center" id="chart-container">
+                            <div class="col-12 text-center" id="chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="vitaminsTab" role="tabpanel" aria-labelledby="vitamins-tab">
+                    <h3>Vitamins Tab</h3>
+                    <p>Vitamins Tab content</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        var chartModel;
+        $(document).ready(function () {
+            @if (Model.Menu.MenuItems.Any()) {
+                @:chartModel = @Html.Raw(
+                                JsonSerializer.Serialize(
+                                            new
+                                            {
+                                                energy = Model.Menu.MenuItems.Sum(x => x.Energy),
+                                                carbs = Model.Menu.MenuItems.Sum(x => x.Carbs),
+                                                protein = Model.Menu.MenuItems.Sum(x => x.Protein),
+                                                fat = Model.Menu.MenuItems.Sum(x => x.Fat)
+                                            }));
+            }
+
+            $('.basicAutoComplete').autoComplete({
+                resolverSettings: {
+                    url: 'https://api.edamam.com/auto-complete?app_id=877a16fa&app_key=401a4cdcc4c369c2f74a92289d629d57'
+                }
+            });
+            $('#MenuItemName').on('autocomplete.select', function (event, ui) {
+                $("#QuantityFields").fadeIn();
+            });
+            // display #QuantityFields after validation
+            if ($('#MenuItemQuantity').val() && $('#MenuItemQuantity').val() != "0") {
+                $("#QuantityFields").show();
+            }
+
+            var percentFormat = d3.format('.1%');
+            var numberFormat = d3.format('.1f');
+
+            if (chartModel) {
+                // generate chart
+                var chart = c3.generate({
+                    size: {
+                        height: 270,
+                        width: 270
+                    },
+                    data: {
+                        columns: [
+                            ['carbs', numberFormat(chartModel.carbs)],
+                            ['protein', numberFormat(chartModel.protein)],
+                            ['fat', numberFormat(chartModel.fat)]
+                        ],
+                        type: 'donut',
+                        colors: {
+                            carbs: '#A8C7E1',
+                            protein: '#FAB571',
+                            fat: '#FA9A71'
+                        },
+                    },
+                    donut: {
+                        label: {
+                            format: function (d, v, i) {
+                                return `${d}g`;
+                            }
+                        }
+                    },
+
+                    legend: {
+                        show: false
+                    },
+                    tooltip: {
+                        format: {
+                            value: function (value, ratio) {
+                                return '<ul class="list-inline">' +
+                                    '<li><span class="badge">' + numberFormat(value) + 'g</span></li>' +
+                                    '<li><span class="badge">' + percentFormat(ratio) + '</span></li>' +
+                                    '<ul>';
+                            }
+                        }
+                    },
+                });
+
+                var chartTitle = d3.select('text.c3-chart-arcs-title');
+                chartTitle.html('');
+                chartTitle.insert('tspan').text(numberFormat(chartModel.energy) + ' kcal').attr('dy', 0).attr('x', 0).attr('class', 'h6');
+
+                d3.select('#chart-container').append('div')
+                    .attr('class', 'legend col-12')
+                    .insert('ul').attr('class', 'list-group')
+                    .selectAll('span')
+                    .data(['carbs', 'protein', 'fat'])
+                    .enter().append('li').attr('class', 'list-group-item')
+                    .append('div').attr('class', 'legend-label')
+                    .attr('data-id', function (id) {
+                        return id;
+                    })
+                    .html(function (id) {
+                        var data = chart.data(id);
+                        return id + '&nbsp;&nbsp;&nbsp;';
+                    })
+                    .on('mouseover', function (id) {
+                        chart.focus(id);
+                    })
+                    .on('mouseout', function (id) {
+                        chart.revert();
+                    })
+                    .insert('span', '.legend-label').attr('class', 'badge')
+                    .each(function (id) {
+                        d3.select(this).style('background-color', chart.color(id));
+                    })
+                    .html(function (id) {
+                        return '&nbsp&nbsp&nbsp&nbsp&nbsp'
+                    });
+            }
+            else {
+                d3.select('#chart-container').
+                    html(function () {
+                        return 'No data';
+                    })
+            }
+        });
+
+        function OnRenameMenuSuccess() {
+            toastr.success("Menu renamed successfully");
+        }
+        function OnRenameMenuFailure(response) {
+            $('#menuNameDiv').html(response.responseText);
+        }
+    </script>
+}
