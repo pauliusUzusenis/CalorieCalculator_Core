@@ -18,11 +18,11 @@ namespace CalorieCalculator.Controllers
         private readonly IMapper _mapper;
         private readonly IMenuRepository _menuRepository;
 
-        public CalculatorController(IMapper mapper, ApplicationDbContext context)
+        public CalculatorController(IMapper mapper, ApplicationDbContext context, IMenuRepository menuRepository)
         {
             _mapper = mapper;
             _context = context;
-            _menuRepository = new MenuRepository(context);
+            _menuRepository = menuRepository;
         }
 
         protected override void Dispose(bool disposing)
