@@ -15,7 +15,7 @@ namespace CalorieCalculator.Helpers
         private const string baseUri = "https://api.edamam.com";
         private const string appId = "877a16fa";
         private const string appKey = "401a4cdcc4c369c2f74a92289d629d57";
-        public static async Task<string> GetProduct(string productName)
+        public static async Task<EdamamProductDto> GetProduct(string productName)
         {
             try
             {
@@ -27,7 +27,8 @@ namespace CalorieCalculator.Helpers
 
                     var response = await client.GetAsync(String.Format("/api/food-database/v2/parser?app_id={0}&app_key={1}&ingr={2}", appId, appKey, productName));
                     response.EnsureSuccessStatusCode();
-                    var result = await response.Content.ReadAsStringAsync();
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    EdamamProductDto result = JsonConvert.DeserializeObject<EdamamProductDto>(responseString);
                     return result;
                 }
             }
@@ -37,7 +38,7 @@ namespace CalorieCalculator.Helpers
             }
         }
 
-        public static async Task<EdamamNutrientsRespDto> GetProductNutrition(double quantity, string measureUri, string foodId)
+        public static async Task<EdamamNutrientsResponseDto> GetProductNutrients(double quantity, string measureUri, string foodId)
         {
             try
             {
@@ -47,7 +48,7 @@ namespace CalorieCalculator.Helpers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-                    var obj = new EdamamNutrientsReqDto
+                    var obj = new EdamamNutrientsRequestDto
                     {
                         Ingredients = new List<Ingredient>
                         {
@@ -66,7 +67,7 @@ namespace CalorieCalculator.Helpers
                     response.EnsureSuccessStatusCode();
                     var resultString = await response.Content.ReadAsStringAsync();
 
-                    EdamamNutrientsRespDto result = JsonConvert.DeserializeObject<EdamamNutrientsRespDto>(resultString);
+                    EdamamNutrientsResponseDto result = JsonConvert.DeserializeObject<EdamamNutrientsResponseDto>(resultString);
                     return result;
                 }
             }

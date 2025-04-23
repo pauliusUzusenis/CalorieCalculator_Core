@@ -18,7 +18,7 @@ namespace CalorieCalculatorCore.Mappings
             CreateMap<MenuItemDto, MenuItem>();
             CreateMap<MenuDto, Menu>();
 
-            CreateMap<ProductEdamamDto, Product>()
+            CreateMap<EdamamProductDto, Product>()
                 .ForMember(
                     dest => dest.Name,
                     opt => opt.MapFrom(src => src.Parsed[0].Food.Name)

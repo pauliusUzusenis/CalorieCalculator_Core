@@ -7,7 +7,7 @@ using System.Web;
 namespace CalorieCalculator.Dtos
 {
     [JsonObject(MemberSerialization.OptOut)]
-    public class EdamamNutrientsReqDto
+    public class EdamamNutrientsRequestDto
     {
         [JsonProperty("ingredients")]
         public List<Ingredient> Ingredients { get; set; }

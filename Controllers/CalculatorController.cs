@@ -75,7 +75,6 @@ namespace CalorieCalculator.Controllers
         public ActionResult DeleteMenu(int id)
         {
             //TODO remove eager loading of menuItems
-            //TODO check if notFound section is necessary
             var menu = _menuRepository.GetById(id);
             if (menu == null)
             {
@@ -112,23 +111,22 @@ namespace CalorieCalculator.Controllers
                 return RedirectToAction("Details", new { id = menuItem.MenuId });
             }
 
-            var response = await EdamamServiceHelper.GetProduct(menuItem.Name);
-            ProductEdamamDto responseFoodDto = JsonConvert.DeserializeObject<ProductEdamamDto>(response);
+            EdamamProductDto responseProductDto = await EdamamServiceHelper.GetProduct(menuItem.Name);
 
-            var responseFood = responseFoodDto.Parsed.FirstOrDefault();
-            if (responseFood == null)
+            var responseParsedDto = responseProductDto.Parsed.FirstOrDefault();
+            if (responseParsedDto == null)
             {
                 ModelState.AddModelError("MenuItem.Name", "Invalid product");
                 return RedirectToAction("Details", new { id = menuItem.MenuId });
             }
 
             // TODO implement _productRepository
-            string responseFoodId = responseFood.Food.FoodId;
+            string responseFoodId = responseParsedDto.Food.FoodId;
             var productInDb = _context.Products.SingleOrDefault(p => p.FoodId == responseFoodId);
 
             if (productInDb == null)
             {
-                Product product = _mapper.Map<ProductEdamamDto, Product>(responseFoodDto);
+                Product product = _mapper.Map<EdamamProductDto, Product>(responseProductDto);
                 _context.Products.Add(product);
                 _context.SaveChanges();
                 productInDb = _context.Products.SingleOrDefault(p => p.FoodId == responseFoodId);
@@ -139,13 +137,13 @@ namespace CalorieCalculator.Controllers
             _context.Entry(newMenuItem).Reference(c => c.MeasureType).Load(); // gaunam MenuItem navigation property
 
             // išsirenkam menuItem likusius duomenis
-            var result2 = await EdamamServiceHelper.GetProductNutrition(newMenuItem.Quantity, newMenuItem.MeasureType.Uri, productInDb.FoodId);
+            var productNutrients = await EdamamServiceHelper.GetProductNutrients(newMenuItem.Quantity, newMenuItem.MeasureType.Uri, productInDb.FoodId);
             newMenuItem.ProductId = productInDb.Id;
-            newMenuItem.Energy = result2.TotalNutrients.Energy.Quantity;
-            newMenuItem.Carbs = result2.TotalNutrients.Carbs.Quantity;
-            newMenuItem.Protein = result2.TotalNutrients.Protein.Quantity;
-            newMenuItem.Fat = result2.TotalNutrients.Fat.Quantity;
-            newMenuItem.Fiber = result2.TotalNutrients.Fiber != null ? result2.TotalNutrients.Fiber.Quantity : 0;
+            newMenuItem.Energy = productNutrients.TotalNutrients.Energy.Quantity;
+            newMenuItem.Carbs = productNutrients.TotalNutrients.Carbs.Quantity;
+            newMenuItem.Protein = productNutrients.TotalNutrients.Protein.Quantity;
+            newMenuItem.Fat = productNutrients.TotalNutrients.Fat.Quantity;
+            newMenuItem.Fiber = productNutrients.TotalNutrients.Fiber != null ? productNutrients.TotalNutrients.Fiber.Quantity : 0;
             newMenuItem.MenuId = menuItem.MenuId;
             _context.SaveChanges();
 
