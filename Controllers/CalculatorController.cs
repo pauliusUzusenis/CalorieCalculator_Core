@@ -3,20 +3,12 @@ using CalorieCalculator.Dtos;
 using CalorieCalculator.Helpers;
 using CalorieCalculator.Models;
 using CalorieCalculator.ViewModels;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using CalorieCalculatorCore.Data;
-using Microsoft.EntityFrameworkCore;
-using CalorieCalculator.ActionFilters;
 using CalorieCalculatorCore.ActionFilters;
+using CalorieCalculatorCore.Data;
+using CalorieCalculatorCore.Repository;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Net;
 
 namespace CalorieCalculator.Controllers
 {
@@ -24,11 +16,13 @@ namespace CalorieCalculator.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IMenuRepository _menuRepository;
 
         public CalculatorController(IMapper mapper, ApplicationDbContext context)
         {
             _mapper = mapper;
             _context = context;
+            _menuRepository = new MenuRepository(context);
         }
 
         protected override void Dispose(bool disposing)
@@ -40,10 +34,7 @@ namespace CalorieCalculator.Controllers
         [ImportModelStateAttribute]
         public ActionResult Index()
         {
-            var menus = _context.Menus
-                                .Include(x => x.MenuItems)
-                                .AsEnumerable();
-
+            var menus = _menuRepository.GetAll();
             var menusDto = _mapper.Map<IEnumerable<Menu>, IEnumerable<MenuDto>>(menus);
             return View(new IndexViewModel
             {
@@ -55,19 +46,14 @@ namespace CalorieCalculator.Controllers
         [ImportModelStateAttribute]
         public ActionResult Details(int id)
         {
-            var menu = _context.Menus
-                                .Include(m => m.MenuItems)
-                                .ThenInclude(m => m.Product)
-                                .SingleOrDefault(m => m.Id == id);
+            var menu = _menuRepository.GetById(id);
             if (menu == null)
             {
                 return NotFound();
             }
-
             var menuDto = _mapper.Map<Menu, MenuDto>(menu);
 
-            var measureTypes = _context.MeasureTypes
-                                        .AsEnumerable();
+            var measureTypes = _context.MeasureTypes.AsEnumerable();
             var measureTypesDto = _mapper.Map<IEnumerable<MeasureType>, IEnumerable<MeasureTypeDto>>(measureTypes);
 
             var menuItemDto = new MenuItemDto
@@ -88,13 +74,15 @@ namespace CalorieCalculator.Controllers
         //[HttpDelete]
         public ActionResult DeleteMenu(int id)
         {
-            var menu = _context.Menus.SingleOrDefault(m => m.Id == id);
+            //TODO remove eager loading of menuItems
+            //TODO check if notFound section is necessary
+            var menu = _menuRepository.GetById(id);
             if (menu == null)
             {
                 return NotFound();
             }
-            _context.Menus.Remove(menu);
-            _context.SaveChanges();
+            _menuRepository.Delete(id);
+            _menuRepository.Save();
 
             return RedirectToAction("Index", "Calculator");
         }
@@ -102,6 +90,7 @@ namespace CalorieCalculator.Controllers
         //[HttpDelete]
         public ActionResult DeleteMenuItem(int id)
         {
+            // TODO implement _menuItemRepository
             var menuItem = _context.MenuItems.SingleOrDefault(m => m.Id == id);
             if (menuItem == null)
             {
@@ -123,11 +112,9 @@ namespace CalorieCalculator.Controllers
                 return RedirectToAction("Details", new { id = menuItem.MenuId });
             }
 
-            // išsirinkti produkto informaciją
             var response = await EdamamServiceHelper.GetProduct(menuItem.Name);
             ProductEdamamDto responseFoodDto = JsonConvert.DeserializeObject<ProductEdamamDto>(response);
 
-            // ar yra toks produktas duombazėje
             var responseFood = responseFoodDto.Parsed.FirstOrDefault();
             if (responseFood == null)
             {
@@ -135,10 +122,10 @@ namespace CalorieCalculator.Controllers
                 return RedirectToAction("Details", new { id = menuItem.MenuId });
             }
 
+            // TODO implement _productRepository
             string responseFoodId = responseFood.Food.FoodId;
-            var productInDb =_context.Products.SingleOrDefault(p => p.FoodId == responseFoodId);
+            var productInDb = _context.Products.SingleOrDefault(p => p.FoodId == responseFoodId);
 
-            // jei nėra išsisaugoti produktą
             if (productInDb == null)
             {
                 Product product = _mapper.Map<ProductEdamamDto, Product>(responseFoodDto);
@@ -146,10 +133,10 @@ namespace CalorieCalculator.Controllers
                 _context.SaveChanges();
                 productInDb = _context.Products.SingleOrDefault(p => p.FoodId == responseFoodId);
             }
-            // gaunam MenuItem navigation property
+
             MenuItem newMenuItem = _mapper.Map<MenuItemDto, MenuItem>(menuItem);
             _context.MenuItems.Add(newMenuItem);
-            _context.Entry(newMenuItem).Reference(c => c.MeasureType).Load();
+            _context.Entry(newMenuItem).Reference(c => c.MeasureType).Load(); // gaunam MenuItem navigation property
 
             // išsirenkam menuItem likusius duomenis
             var result2 = await EdamamServiceHelper.GetProductNutrition(newMenuItem.Quantity, newMenuItem.MeasureType.Uri, productInDb.FoodId);
@@ -158,7 +145,7 @@ namespace CalorieCalculator.Controllers
             newMenuItem.Carbs = result2.TotalNutrients.Carbs.Quantity;
             newMenuItem.Protein = result2.TotalNutrients.Protein.Quantity;
             newMenuItem.Fat = result2.TotalNutrients.Fat.Quantity;
-            newMenuItem.Fiber = result2.TotalNutrients.Fiber.Quantity;
+            newMenuItem.Fiber = result2.TotalNutrients.Fiber != null ? result2.TotalNutrients.Fiber.Quantity : 0;
             newMenuItem.MenuId = menuItem.MenuId;
             _context.SaveChanges();
 
@@ -175,8 +162,8 @@ namespace CalorieCalculator.Controllers
             }
 
             Menu newMenu = _mapper.Map<MenuDto, Menu>(menu);
-            _context.Menus.Add(newMenu);
-            _context.SaveChanges();
+            _menuRepository.Insert(newMenu);
+            _menuRepository.Save();
 
             return RedirectToAction("Details", "Calculator", new { id = newMenu.Id });
         }
@@ -190,9 +177,10 @@ namespace CalorieCalculator.Controllers
                 return PartialView("MenuNamePartialView", menuDto);
             }
 
-            var menuInDb = _context.Menus.Single(m => m.Id == menuDto.Id);
+            var menuInDb = _menuRepository.GetById(menuDto.Id);
             menuInDb.Name = menuDto.Name;
-            _context.SaveChanges();
+            _menuRepository.Update(menuInDb);
+            _menuRepository.Save();
 
             return PartialView("MenuNamePartialView", menuDto);
         }
