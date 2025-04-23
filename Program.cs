@@ -1,6 +1,5 @@
 using AspNetCore.Unobtrusive.Ajax;
 using CalorieCalculatorCore.Data;
-using CalorieCalculatorCore.Mappings;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
