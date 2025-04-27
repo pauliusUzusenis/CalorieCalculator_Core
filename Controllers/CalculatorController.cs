@@ -17,18 +17,14 @@ namespace CalorieCalculator.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IMenuRepository _menuRepository;
+        private readonly IMenuItemRepository _menuItemRepository;
         private readonly IProductRepository _productRepository;
 
-        public CalculatorController(IMapper mapper, ApplicationDbContext context, IMenuRepository menuRepository, IProductRepository productRepository)
+        public CalculatorController(IMapper mapper, ApplicationDbContext context, IMenuRepository menuRepository, IMenuItemRepository menuItemRepository, IProductRepository productRepository)
         {
             _mapper = mapper;
             _context = context;
-            _menuRepository = menuRepository;            _productRepository = productRepository;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            _context.Dispose();
+            _menuRepository = menuRepository;            _menuItemRepository = menuItemRepository;            _productRepository = productRepository;
         }
 
         [HttpGet]
@@ -80,6 +76,7 @@ namespace CalorieCalculator.Controllers
             {
                 return NotFound();
             }
+
             _menuRepository.Delete(id);
             _menuRepository.Save();
 
@@ -89,17 +86,16 @@ namespace CalorieCalculator.Controllers
         //[HttpDelete]
         public ActionResult DeleteMenuItem(int id)
         {
-            // TODO implement _menuItemRepository
-            var menuItem = _context.MenuItems.SingleOrDefault(m => m.Id == id);
+            var menuItem = _menuItemRepository.GetById(id);
             if (menuItem == null)
             {
                 return NotFound();
             }
-            var menuId = menuItem.MenuId;
-            _context.MenuItems.Remove(menuItem);
-            _context.SaveChanges();
 
-            return RedirectToAction("Details", "Calculator", new { id = menuId });
+            _menuItemRepository.Delete(menuItem);
+            _menuItemRepository.Save();
+
+            return RedirectToAction("Details", "Calculator", new { id = menuItem.MenuId });
         }
 
         [HttpPost]
@@ -120,7 +116,6 @@ namespace CalorieCalculator.Controllers
                 return RedirectToAction("Details", new { id = menuItem.MenuId });
             }
 
-            // TODO implement _productRepository
             var responseFoodId = responseParsedDto.Food.FoodId;
             var productInDb = _productRepository.GetByFoodId(responseFoodId);
 
@@ -133,10 +128,10 @@ namespace CalorieCalculator.Controllers
             }
 
             MenuItem newMenuItem = _mapper.Map<MenuItemDto, MenuItem>(menuItem);
-            _context.MenuItems.Add(newMenuItem);
-            _context.Entry(newMenuItem).Reference(c => c.MeasureType).Load(); // gaunam MenuItem navigation property
+            _menuItemRepository.Insert(newMenuItem);
+            _context.Entry(newMenuItem).Reference(c => c.MeasureType).Load(); // load MenuItem navigation property
 
-            // išsirenkam menuItem likusius duomenis
+            // get remaining menuItem fields
             var productNutrients = await EdamamServiceHelper.GetProductNutrients(newMenuItem.Quantity, newMenuItem.MeasureType.Uri, productInDb.FoodId);
             newMenuItem.ProductId = productInDb.Id;
             newMenuItem.Energy = productNutrients.TotalNutrients.Energy.Quantity;
@@ -145,7 +140,7 @@ namespace CalorieCalculator.Controllers
             newMenuItem.Fat = productNutrients.TotalNutrients.Fat.Quantity;
             newMenuItem.Fiber = productNutrients.TotalNutrients.Fiber != null ? productNutrients.TotalNutrients.Fiber.Quantity : 0;
             newMenuItem.MenuId = menuItem.MenuId;
-            _context.SaveChanges();
+            _menuItemRepository.Save();
 
             return RedirectToAction("Details", new { id = menuItem.MenuId });
         }
@@ -181,6 +176,11 @@ namespace CalorieCalculator.Controllers
             _menuRepository.Save();
 
             return PartialView("MenuNamePartialView", menuDto);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
         }
     }
 }
