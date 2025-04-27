@@ -17,12 +17,13 @@ namespace CalorieCalculator.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IMenuRepository _menuRepository;
+        private readonly IProductRepository _productRepository;
 
-        public CalculatorController(IMapper mapper, ApplicationDbContext context, IMenuRepository menuRepository)
+        public CalculatorController(IMapper mapper, ApplicationDbContext context, IMenuRepository menuRepository, IProductRepository productRepository)
         {
             _mapper = mapper;
             _context = context;
-            _menuRepository = menuRepository;
+            _menuRepository = menuRepository;            _productRepository = productRepository;
         }
 
         protected override void Dispose(bool disposing)
@@ -74,7 +75,6 @@ namespace CalorieCalculator.Controllers
         //[HttpDelete]
         public ActionResult DeleteMenu(int id)
         {
-            //TODO remove eager loading of menuItems
             var menu = _menuRepository.GetById(id);
             if (menu == null)
             {
@@ -121,15 +121,15 @@ namespace CalorieCalculator.Controllers
             }
 
             // TODO implement _productRepository
-            string responseFoodId = responseParsedDto.Food.FoodId;
-            var productInDb = _context.Products.SingleOrDefault(p => p.FoodId == responseFoodId);
+            var responseFoodId = responseParsedDto.Food.FoodId;
+            var productInDb = _productRepository.GetByFoodId(responseFoodId);
 
             if (productInDb == null)
             {
                 Product product = _mapper.Map<EdamamProductDto, Product>(responseProductDto);
-                _context.Products.Add(product);
-                _context.SaveChanges();
-                productInDb = _context.Products.SingleOrDefault(p => p.FoodId == responseFoodId);
+                _productRepository.Insert(product);
+                _productRepository.Save();
+                productInDb = _productRepository.GetByFoodId(responseFoodId);
             }
 
             MenuItem newMenuItem = _mapper.Map<MenuItemDto, MenuItem>(menuItem);
