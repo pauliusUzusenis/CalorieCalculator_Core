@@ -72,7 +72,7 @@
                             @foreach (var menuItem in Model.Menu.MenuItems)
                             {
                             <tr>
-                                <td class="w-1">
+                                <td style="width: 28px;">
                                     <a href="@Url.Action("DeleteMenuItem", "Calculator", new { id = menuItem.Id })">
                                         <i class="fas fa-times"></i>
                                     </a>
