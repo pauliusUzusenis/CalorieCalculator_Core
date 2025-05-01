@@ -220,11 +220,11 @@ i.fas {
         padding: 0.5rem 0.5rem;
     }
 
-@media (min-width: 1200px) {
+/*@media (min-width: 1200px) {
     .table-sm th, .table-sm td {
-        padding: 0.5rem 1rem;
-    }
+        padding: 0.5rem 0.5rem;
 }
+}*/
 
 /* Rounded corners for tables */
 .table-sm th:first-of-type {
