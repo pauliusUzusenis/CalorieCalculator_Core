@@ -85,7 +85,7 @@ body {
 }
 
 footer {
-    height: 150px;
+    height: 50px;
 }
 
 .w-1 {
@@ -223,7 +223,7 @@ i.fas {
 /*@media (min-width: 1200px) {
     .table-sm th, .table-sm td {
         padding: 0.5rem 0.5rem;
-}
+    }
 }*/
 
 /* Rounded corners for tables */
