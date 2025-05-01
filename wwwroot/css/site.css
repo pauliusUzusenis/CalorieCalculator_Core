@@ -242,3 +242,18 @@ i.fas {
 .table-sm tr:last-of-type td:last-of-type {
     border-bottom-right-radius: 10px;
 }
+
+.tab-pane.active {
+    animation-name: fadeIn;
+    animation-duration: 400ms;
+    animation-timing-function: linear;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

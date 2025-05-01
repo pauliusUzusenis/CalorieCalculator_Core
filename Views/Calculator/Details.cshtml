@@ -152,7 +152,7 @@
                 }
             });
             $('#MenuItemName').on('autocomplete.select', function (event, ui) {
-                $("#QuantityFields").fadeIn();
+                $("#QuantityFields").fadeIn(400);
             });
             // display #QuantityFields after validation
             if ($('#MenuItemQuantity').val() && $('#MenuItemQuantity').val() != "0") {
