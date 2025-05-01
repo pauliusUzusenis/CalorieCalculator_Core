@@ -9,7 +9,7 @@
         {
         <div class="row">
             <div class="col-md-4">
-                @Html.TextBox("Name", "", new { @class = "form-control", placeholder = "Enter menu title" })
+                @Html.TextBox("Name", "", new { @class = "form-control", placeholder = "Enter menu name" })
                 @Html.ValidationMessage("Name")
             </div>
             <div class="col-md-8 mt-3 mt-md-0 text-md-right">
@@ -32,7 +32,7 @@
             <thead>
                 <tr>
                     <th></th>
-                    <th>Menu title</th>
+                    <th>Menu name</th>
                     <th class="text-right">Energy</th>
                     <th class="text-right">Carbs</th>
                     <th class="text-right">Protein</th>
