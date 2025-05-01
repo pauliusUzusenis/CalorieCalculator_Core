@@ -63,7 +63,7 @@ body {
 
 .tab-content {
     background-color: var(--white);
-    padding: 1.2rem 1rem;
+    padding: 1rem 1rem;
 }
 
 .nav-pills .nav-link.active {
