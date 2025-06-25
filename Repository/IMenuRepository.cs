@@ -4,7 +4,7 @@ namespace CalorieCalculatorCore.Repository
 {
     public interface IMenuRepository
     {
-        IEnumerable<Menu> GetAll();
+        IEnumerable<Menu> GetAll(string userId);
         Menu GetById(int menuID);
         void Insert(Menu menu);
         void Update(Menu menu);

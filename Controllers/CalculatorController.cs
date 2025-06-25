@@ -1,4 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using System.Security.Claims;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using CalorieCalculator.Dtos;
 using CalorieCalculator.Helpers;
 using CalorieCalculator.Models;
@@ -6,23 +12,25 @@ using CalorieCalculator.ViewModels;
 using CalorieCalculatorCore.ActionFilters;
 using CalorieCalculatorCore.Data;
 using CalorieCalculatorCore.Repository;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Net;
+
 
 namespace CalorieCalculator.Controllers
 {
+    [Authorize]
     public class CalculatorController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly IMapper _mapper;
         private readonly IMenuRepository _menuRepository;
         private readonly IMenuItemRepository _menuItemRepository;
         private readonly IProductRepository _productRepository;
 
-        public CalculatorController(IMapper mapper, ApplicationDbContext context, IMenuRepository menuRepository, IMenuItemRepository menuItemRepository, IProductRepository productRepository)
+        public CalculatorController(IMapper mapper, UserManager<IdentityUser> userManager, ApplicationDbContext context, 
+            IMenuRepository menuRepository, IMenuItemRepository menuItemRepository, IProductRepository productRepository)
         {
             _mapper = mapper;
+            _userManager = userManager;
             _context = context;
             _menuRepository = menuRepository;            _menuItemRepository = menuItemRepository;            _productRepository = productRepository;
         }
@@ -31,7 +39,7 @@ namespace CalorieCalculator.Controllers
         [ImportModelStateAttribute]
         public ActionResult Index()
         {
-            var menus = _menuRepository.GetAll();
+            var menus = _menuRepository.GetAll(_userManager.GetUserId(User));
             var menusDto = _mapper.Map<IEnumerable<Menu>, IEnumerable<MenuDto>>(menus);
             return View(new IndexViewModel
             {

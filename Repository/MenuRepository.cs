@@ -12,9 +12,12 @@ namespace CalorieCalculatorCore.Repository
             _context = context;
         }
         //TODO extract include logic to method parameters
-        public IEnumerable<Menu> GetAll()
+        public IEnumerable<Menu> GetAll(string userId)
         {
-            return _context.Menus.Include(x => x.MenuItems).AsEnumerable();
+            return _context.Menus
+                            .Where(x => x.UserId == userId)
+                            .Include(x => x.MenuItems)
+                            .AsEnumerable();
         }
         //TODO extract include logic to method parameters
         public Menu GetById(int menuID)

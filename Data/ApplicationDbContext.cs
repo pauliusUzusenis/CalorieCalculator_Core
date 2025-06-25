@@ -1,15 +1,15 @@
-﻿using CalorieCalculator.Models;
-using CalorieCalculatorCore.Extensions.Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using CalorieCalculator.Models;
+using CalorieCalculatorCore.Extensions.Microsoft.EntityFrameworkCore;
 
 namespace CalorieCalculatorCore.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-
         }
         public DbSet<Product> Products { get; set; }
         public DbSet<MeasureType> MeasureTypes { get; set; }
@@ -19,6 +19,7 @@ namespace CalorieCalculatorCore.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.RemovePluralizingTableNameConvention();
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
