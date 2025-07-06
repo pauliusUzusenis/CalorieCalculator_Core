@@ -33,14 +33,49 @@
         <div class="tab-panel mb-4">
             <ul class="nav nav-pills rounded-top" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link active rounded-top-left" href="#fillingTab" id="filling-tab" role="tab" data-toggle="tab" aria-controls="fillingTab" aria-selected="true">Filling</a>
+                    <a class="nav-link active" href="#itemsTab" id="items-tab" role="tab" data-toggle="tab" aria-controls="itemsTab" aria-selected="false">Items</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link" href="#reviewTab" id="review-tab" role="tab" data-toggle="tab" aria-controls="reviewTab" aria-selected="false">Review</a>
+                    <a class="nav-link rounded-top-left" href="#newTab" id="new-tab" role="tab" data-toggle="tab" aria-controls="newTab" aria-selected="true">New item</a>
+                    
                 </li>
             </ul>
             <div class="tab-content box-shadow rounded-bottom border-0">
-                <div class="tab-pane fade show active" id="fillingTab" role="tabpanel" aria-labelledby="filling-tab">
+                <div class="tab-pane fade show active" id="itemsTab" role="tabpanel" aria-labelledby="items-tab">
+                    <table class="table-sm w-100">
+                        <tbody>
+                            @foreach (var menuItem in Model.Menu.MenuItems)
+                            {
+                                <tr>
+                                    <td style="width: 28px;">
+                                        <a href="@Url.Action("DeleteMenuItem", "Calculator", new { id = menuItem.Id })">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        @menuItem.Product.Name
+                                    </td>
+                                    <td>
+                                        @menuItem.Quantity.ToString("0.#")g
+                                    </td>
+                                    <td class="text-right">
+                                        @menuItem.Energy.ToString("0.#")&nbsp;kcal
+                                    </td>
+                                    <td class="text-right" style="color: #A8C7E1;">
+                                        @menuItem.Carbs.ToString("0.#")g
+                                    </td>
+                                    <td class="text-right" style="color: #FAB571;">
+                                        @menuItem.Protein.ToString("0.#")g
+                                    </td>
+                                    <td class="text-right" style="color: #FA9A71;">
+                                        @menuItem.Fat.ToString("0.#")g
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade" id="newTab" role="tabpanel" aria-labelledby="new-tab">
                     @using (Html.BeginForm("Save", "Calculator"))
                     {
                         <label for="Name" class="font-weight-bold">Select product:</label>
@@ -65,40 +100,6 @@
                         </div>
                     }
                 </div>
-                <div class="tab-pane fade" id="reviewTab" role="tabpanel" aria-labelledby="review-tab">
-                    <table class="table-sm w-100">
-                        <tbody>
-                            @foreach (var menuItem in Model.Menu.MenuItems)
-                            {
-                            <tr>
-                                <td style="width: 28px;">
-                                    <a href="@Url.Action("DeleteMenuItem", "Calculator", new { id = menuItem.Id })">
-                                        <i class="fas fa-times"></i>
-                                    </a>
-                                </td>
-                                <td>
-                                    @menuItem.Product.Name
-                                </td>
-                                <td>
-                                    @menuItem.Quantity.ToString("0.#")g
-                                </td>
-                                <td class="text-right">
-                                    @menuItem.Energy.ToString("0.#")&nbsp;kcal
-                                </td>
-                                <td class="text-right" style="color: #A8C7E1;">
-                                    @menuItem.Carbs.ToString("0.#")g
-                                </td>
-                                <td class="text-right" style="color: #FAB571;">
-                                    @menuItem.Protein.ToString("0.#")g
-                                </td>
-                                <td class="text-right" style="color: #FA9A71;">
-                                    @menuItem.Fat.ToString("0.#")g
-                                </td>
-                            </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </div>
     </div>
@@ -108,9 +109,6 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link rounded-top-left active" href="#macrosTab" id="macros-tab" role="tab" data-toggle="tab" aria-controls="cTab" aria-selected="true">Macros</a>
                 </li>
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link" href="#vitaminsTab" id="vitamins-tab" role="tab" data-toggle="tab" aria-controls="vitaminsTab" aria-selected="false">Vitamins</a>
-                </li>
             </ul>
             <div class="tab-content box-shadow rounded-bottom border-0">
                 <div class="tab-pane fade show active" id="macrosTab" role="tabpanel" aria-labelledby="macros-tab">
@@ -119,9 +117,6 @@
                             <div class="col-12 text-center" id="chart"></div>
                         </div>
                     </div>
-                </div>
-                <div class="tab-pane fade" id="vitaminsTab" role="tabpanel" aria-labelledby="vitamins-tab">
-                    <p>Vitamins Tab content</p>
                 </div>
             </div>
         </div>
