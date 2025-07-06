@@ -8,7 +8,7 @@
 particlesJS("particle-container", {
     "particles": {
         "number": {
-            "value": 10,
+            "value": 12,
             "density": {
                 "enable": true,
                 "value_area": 800
@@ -25,7 +25,7 @@ particlesJS("particle-container", {
             }
         },
         "opacity": {
-            "value": 0.3,
+            "value": 0.32,
             "random": false,
             "anim": {
                 "enable": false,
