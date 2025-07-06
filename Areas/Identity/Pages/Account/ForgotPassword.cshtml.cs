@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace CalorieCalculatorCore2.Areas.Identity.Pages.Account
+namespace CalorieCalculatorCore.Areas.Identity.Pages.Account
 {
     public class ForgotPasswordModel : PageModel
     {

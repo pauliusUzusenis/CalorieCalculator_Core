@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace CalorieCalculatorCore2.Extensions
+namespace CalorieCalculatorCore.Extensions
 {
     public static class ClaimsPrincipalExtensions
     {

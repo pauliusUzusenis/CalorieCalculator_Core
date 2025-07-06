@@ -14,20 +14,21 @@
     <link rel="stylesheet" href="~/lib/toastr.js/toastr.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/c3/c3.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/CalorieCalculatorCore2.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/CalorieCalculatorCore.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <partial name="_LoginPartial" />
-    </header>
-    <div id="particle-container"></div>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+    <div class="body-wrapper">
+        <header>
+            <partial name="_LoginPartial" />
+        </header>
+        <div id="particle-container"></div>
+        <div class="container">
+            <main role="main" class="pt-2 pb-3">
+                @RenderBody()
+            </main>
+        </div>
     </div>
-
-    <footer class="bg-light d-flex justify-content-center align-items-center footer text-muted">
+    <footer class="bg-light d-flex justify-content-center align-items-center footer">
         &copy; @DateTime.Now.Year.ToString() - CalorieCalculator
     </footer>
 

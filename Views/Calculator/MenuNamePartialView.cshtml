@@ -1,5 +1,7 @@
-﻿@model CalorieCalculator.Dtos.MenuDto
+﻿@using CalorieCalculatorCore.Extensions
+@model CalorieCalculator.Dtos.MenuDto
 
 @Html.TextBoxFor(m => m.Name, Model.Name, new { @class = "form-control" })
 @Html.ValidationMessageFor(m => m.Name)
 @Html.HiddenFor(m => m.Id)
+@Html.Hidden("UserId", User.GetUserId(), new { @class = "form-control" })

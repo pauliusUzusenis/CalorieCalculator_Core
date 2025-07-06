@@ -1,4 +1,4 @@
-﻿@using CalorieCalculatorCore2.Extensions
+﻿@using CalorieCalculatorCore.Extensions
 @model CalorieCalculator.ViewModels.IndexViewModel
 @{
     ViewBag.Title = "Menu list - CalorieCalculator";
@@ -12,7 +12,7 @@
             <div class="col-md-4">
                 @Html.TextBox("Name", "", new { @class = "form-control", placeholder = "Enter menu name" })
                 @Html.ValidationMessage("Name")
-                @Html.Hidden("UserId", User.GetUserId(), new { @class = "form-control" })              
+                @Html.Hidden("UserId", User.GetUserId(), new { @class = "form-control" })
             </div>
             <div class="col-md-8 mt-3 mt-md-0 text-md-right">
                 <button type="submit" class="btn btn-primary">Create</button>

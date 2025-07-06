@@ -1,10 +1,8 @@
 ﻿using System.Net;
-using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using CalorieCalculator.Dtos;
 using CalorieCalculator.Helpers;
 using CalorieCalculator.Models;
