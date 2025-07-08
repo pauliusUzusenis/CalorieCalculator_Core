@@ -28,6 +28,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+    using (var scope = app.Services.CreateScope())
+    {
+        ApplicationDbContext dbcontext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        dbcontext.Database.EnsureCreated();
+    }
 }
 else
 {

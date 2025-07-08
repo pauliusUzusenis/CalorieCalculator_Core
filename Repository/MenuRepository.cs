@@ -23,9 +23,11 @@ namespace CalorieCalculatorCore.Repository
         public Menu GetById(int menuID)
         {
             return _context.Menus
-                            .Include(m => m.MenuItems)
+                        .Include(m => m.MenuItems)
                             .ThenInclude(m => m.Product)
-                            .SingleOrDefault(m => m.Id == menuID);
+                        .Include(m => m.MenuItems)
+                            .ThenInclude(m => m.MeasureType)
+                        .Single(m => m.Id == menuID);
         }
         public void Insert(Menu menu)
         {

@@ -56,7 +56,7 @@
                                         @menuItem.Product.Name
                                     </td>
                                     <td>
-                                        @menuItem.Quantity.ToString("0.#")g
+                                        @menuItem.Quantity.ToString("0.#")@menuItem.MeasureType.Symbol
                                     </td>
                                     <td class="text-right">
                                         @menuItem.Energy.ToString("0.#")&nbsp;kcal

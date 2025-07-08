@@ -18,6 +18,22 @@ namespace CalorieCalculatorCore.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<MeasureType>().HasData(
+                new MeasureType
+                {
+                    Id = 1,
+                    Name = "Gram",
+                    Uri = "http://www.edamam.com/ontologies/edamam.owl#Measure_gram",
+                    Symbol = "g",
+                },
+                new MeasureType
+                {
+                    Id = 2,
+                    Name = "Milliliter",
+                    Uri = "http://www.edamam.com/ontologies/edamam.owl#Measure_milliliter",
+                    Symbol = "ml",
+                }
+            );
             modelBuilder.RemovePluralizingTableNameConvention();
             base.OnModelCreating(modelBuilder);
         }

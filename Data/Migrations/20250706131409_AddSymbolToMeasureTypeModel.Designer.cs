@@ -4,6 +4,7 @@ using CalorieCalculatorCore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CalorieCalculatorCore.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250706131409_AddSymbolToMeasureTypeModel")]
+    partial class AddSymbolToMeasureTypeModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,22 +48,6 @@ namespace CalorieCalculatorCore.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MeasureType");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Gram",
-                            Symbol = "g",
-                            Uri = "http://www.edamam.com/ontologies/edamam.owl#Measure_gram"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Milliliter",
-                            Symbol = "ml",
-                            Uri = "http://www.edamam.com/ontologies/edamam.owl#Measure_milliliter"
-                        });
                 });
 
             modelBuilder.Entity("CalorieCalculator.Models.Menu", b =>
